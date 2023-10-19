@@ -15,17 +15,17 @@ First, setup ArduPilot SITL and then clone this repo into your catkin workspace.
 
 Terminal 1:
 
-roslaunch gz_launch_ros distance_sensor_gazebo.launch
+`roslaunch gz_launch_ros distance_sensor_gazebo.launch`
 
 Terminal 2:
 
- ../Tools/autotest/sim_vehicle.py -f gazebo-iris --out udp:127.0.0.1:14551 --console
+ `../Tools/autotest/sim_vehicle.py -f gazebo-iris --out udp:127.0.0.1:14551 --console`
 
 Terminal 3:
 
-roslaunch mavros apm.launch fcu_url:="udp://127.0.0.1:14551@"
+`roslaunch mavros apm.launch fcu_url:="udp://127.0.0.1:14551@"`
 
 Terminal 4:
 
-rosrun follow_tgt_opencv follow_target.py
+`rosrun follow_tgt_opencv follow_target.py`
 
