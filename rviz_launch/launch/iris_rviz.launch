@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="model" default="$(find gz_launch_ros)/models/iris_with_standoffs/iris_ros.urdf.xacro"/>
+
+  
+  <param name="robot_description"
+  command="$(find xacro)/xacro --inorder '$(arg model)'" />
+
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> 
+
+  <!-- Show in Rviz   -->
+  <node name="rviz" pkg="rviz" type="rviz"/>
+
+</launch>

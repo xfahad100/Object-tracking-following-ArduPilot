@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<robot name="iris" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Include common properties -->
+  <xacro:include filename="$(find gz_launch_ros)/models/iris_with_standoffs/component_snippets.xacro" />
+  <xacro:include filename="$(find gz_launch_ros)/models/iris_with_standoffs/iris.gazebo" />
+
+  <!-- Include Gazebo description -->
+
+  <origin xyz="0 0 0.194923" rpy="0 0 0"/>
+
+
+    <link name='base_link'>
+          <velocity_decay>
+        <linear>0.0</linear>
+        <angular>0.0</angular>
+      </velocity_decay>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.5"/>
+      <inertia ixx="0.008" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.017"/>
+    </inertial>
+    <collision name="base_link_collision">
+      <origin xyz="0 0 -0.08" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.47 0.47 0.23"/>
+      </geometry>
+    </collision>
+    <visual name="base_link_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://gz_launch_ros/models/iris_with_standoffs/meshes/iris.dae"/>
+      </geometry>
+    </visual>
+    <visual name="front_left_leg_visual">
+      <origin xyz="0.123 0.22 -0.11" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.005" length="0.17"/>
+      </geometry>
+    </visual>
+  <!-- Front Right Leg Visual -->
+  <visual name="front_right_leg_visual">
+    <origin xyz="0.123 -0.22 -0.11" rpy="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.005" length="0.17"/>
+    </geometry>
+  </visual>
+
+  <!-- Rear Left Leg Visual -->
+  <visual name="rear_left_leg_visual">
+    <origin xyz="-0.140 0.21 -0.11" rpy="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.005" length="0.17"/>
+    </geometry>
+  </visual>
+
+  <!-- Rear Right Leg Visual -->
+  <visual name="rear_right_leg_visual">
+    <origin xyz="-0.140 -0.21 -0.11" rpy="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.005" length="0.17"/>
+    </geometry>
+
+  </visual>
+</link>
+
+<!-- Define the 'iris/ground_truth/odometry_sensorgt_link' link -->
+<link name="iris/ground_truth/odometry_sensorgt_link">
+  <origin xyz="0 0 0" rpy="0 -0 0"/>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <mass value="0.000015"/>
+    <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/>
+  </inertial>
+</link>
+
+
+<!-- Define the 'iris/ground_truth/odometry_sensorgt_joint' joint -->
+<joint name="iris/ground_truth/odometry_sensorgt_joint" type="revolute">
+  <child link="iris/ground_truth/odometry_sensorgt_link"/>
+  <parent link="base_link"/>
+  <axis xyz="0 0 1"/>
+  <limit lower="0" upper="0" effort="0" velocity="0"/>
+  <dynamics damping="1.0"/>
+  <use_parent_model_frame>1</use_parent_model_frame>
+
+</joint>
+
+<!-- Define the 'iris/imu_link' link -->
+<link name="iris/imu_link">
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <mass value="0.000015"/>
+    <inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00002" iyz="0" izz="0.00002"/>
+  </inertial>
+</link>
+
+<!-- Define the 'iris/imu_joint' joint -->
+<joint name="iris/imu_joint" type="revolute">
+  <child link="iris/imu_link"/>
+  <parent link="base_link"/>
+  <axis xyz="0 0 1"/>
+  <limit lower="0" upper="0" effort="0" velocity="0"/>
+  <dynamics damping="1.0"/>
+
+</joint>
+
+<!-- Define the 'rotor_0' link -->
+<link name="rotor_0">
+<origin xyz="0.13 -0.22 0.023" rpy="0 -0 0"/>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <mass value="0.025"/>
+    <inertia ixx="9.75e-06" ixy="0" ixz="0" iyy="0.000166704" iyz="0" izz="0.000167604"/>
+  </inertial>
+  <collision name="rotor_0_collision">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <cylinder length="0.005" radius="0.1"/>
+    </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+  </collision>
+  <visual name="rotor_0_visual">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <mesh filename="package://gz_launch_ros/models/iris_with_standoffs/meshes/iris_prop_ccw.dae" scale="1 1 1"/>
+    </geometry>
+  </visual>
+  <gravity>1</gravity>
+  <velocity_decay/>
+  <self_collide>0</self_collide>
+</link>
+
+<!-- Define the 'rotor_0_joint' joint with reasonable limits -->
+<joint name="rotor_0_joint" type="continuous">
+  <child link="rotor_0"/>
+  <parent link="base_link"/>
+  <origin xyz="0.13 -0.22 0.023" rpy="0 -0 0"/>
+  <axis xyz="0 0 1"/>
+  <dynamics damping="0.004"/>
+  <use_parent_model_frame>1</use_parent_model_frame>
+        <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+        </ode>
+      </physics>
+</joint>
+
+
+<!-- Define the 'rotor_1' link -->
+<link name="rotor_1">
+<origin xyz="-0.13 0.2 0.023" rpy="0 -0 0"/>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <mass value="0.025"/>
+    <inertia ixx="9.75e-06" ixy="0" ixz="0" iyy="0.000166704" iyz="0" izz="0.000167604"/>
+  </inertial>
+  <collision name="rotor_1_collision">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <cylinder length="0.005" radius="0.1"/>
+    </geometry>
+    <surface>
+      <contact>
+        <ode/>
+      </contact>
+      <friction>
+        <ode/>
+      </friction>
+    </surface>
+  </collision>
+  <visual name="rotor_1_visual">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <mesh filename="package://gz_launch_ros/models/iris_with_standoffs/meshes/iris_prop_ccw.dae" scale="1 1 1"/>
+    </geometry>
+  </visual>
+  <gravity>1</gravity>
+  <velocity_decay/>
+  <self_collide>0</self_collide>
+</link>
+
+<!-- Define the 'rotor_1_joint' joint -->
+<joint name="rotor_1_joint" type="continuous">
+  <child link="rotor_1"/>
+  <parent link="base_link"/>
+  <origin xyz="-0.13 0.2 0.023" rpy="0 -0 0"/>
+  <axis xyz="0 0 1"/>
+  <dynamics damping="0.004"/>
+  <use_parent_model_frame>1</use_parent_model_frame>
+  <physics>
+    <ode>
+      <implicit_spring_damper>1</implicit_spring_damper>
+    </ode>
+  </physics>
+</joint>
+
+<!-- Define the 'rotor_2' link -->
+<link name="rotor_2">
+<origin xyz="0.13 0.22 0.023" rpy="0 -0 0"/>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <mass value="0.025"/>
+    <inertia ixx="9.75e-06" ixy="0" ixz="0" iyy="0.000166704" iyz="0" izz="0.000167604"/>
+  </inertial>
+  <collision name="rotor_2_collision">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <cylinder length="0.005" radius="0.1"/>
+    </geometry>
+    <surface>
+      <contact>
+        <ode/>
+      </contact>
+      <friction>
+        <ode/>
+      </friction>
+    </surface>
+  </collision>
+  <visual name="rotor_2_visual">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <mesh filename="package://gz_launch_ros/models/iris_with_standoffs/meshes/iris_prop_cw.dae" scale="1 1 1"/>
+    </geometry>
+  </visual>
+  <gravity>1</gravity>
+  <velocity_decay/>
+  <self_collide>0</self_collide>
+</link>
+
+<!-- Define the 'rotor_2_joint' joint -->
+<joint name="rotor_2_joint" type="continuous">
+  <child link="rotor_2"/>
+  <parent link="base_link"/>
+  <origin xyz="0.13 0.22 0.023" rpy="0 -0 0"/>
+  <axis xyz="0 0 1"/>
+  <dynamics damping="0.004"/>
+  <use_parent_model_frame>1</use_parent_model_frame>
+  <physics>
+    <ode>
+      <implicit_spring_damper>1</implicit_spring_damper>
+    </ode>
+  </physics>
+</joint>
+
+<!-- Define the 'rotor_3' link -->
+<link name="rotor_3">
+<origin xyz="-0.13 -0.2 0.023" rpy="0 -0 0"/>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <mass value="0.025"/>
+    <inertia ixx="9.75e-06" ixy="0" ixz="0" iyy="0.000166704" iyz="0" izz="0.000167604"/>
+  </inertial>
+  <collision name="rotor_3_collision">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <cylinder length="0.005" radius="0.1"/>
+    </geometry>
+    <surface>
+      <contact>
+        <ode/>
+      </contact>
+      <friction>
+        <ode/>
+      </friction>
+    </surface>
+  </collision>
+  <visual name="rotor_3_visual">
+    <origin xyz="0 0 0" rpy="0 -0 0"/>
+    <geometry>
+      <mesh filename="package://gz_launch_ros/models/iris_with_standoffs/meshes/iris_prop_cw.dae" scale="1 1 1"/>
+    </geometry>
+  </visual>
+  <gravity>1</gravity>
+  <velocity_decay/>
+  <self_collide>0</self_collide>
+</link>
+
+<!-- Define the 'rotor_3_joint' joint -->
+<joint name="rotor_3_joint" type="continuous">
+  <child link="rotor_3"/>
+  <parent link="base_link"/>
+  <origin xyz="-0.13 -0.2 0.023" rpy="0 -0 0"/>
+  <axis xyz="0 0 1"/>
+  <dynamics damping="0.004"/>
+  <use_parent_model_frame>1</use_parent_model_frame>
+  <physics>
+    <ode>
+      <implicit_spring_damper>1</implicit_spring_damper>
+    </ode>
+  </physics>
+</joint>
+
+
+  <!-- Hokuyo Laser -->
+  <link name="hokuyo_link">
+    <collision>
+      <origin xyz="0 0 0.05" rpy="0 1.57 0"/>
+      <geometry>
+    <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.05" rpy="0 1.57 0"/>
+      <geometry>
+        <mesh filename="package://gz_launch_ros/models/hokuyo/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="hokuyo_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="hokuyo_link"/>
+  </joint>
+
+</robot>

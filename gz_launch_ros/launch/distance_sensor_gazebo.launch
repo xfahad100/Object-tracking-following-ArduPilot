@@ -1,0 +1,32 @@
+<launch>
+
+  <arg name="debug" default="true"/>
+  <arg name="model" default="$(find gz_launch_ros)/models/iris_with_standoffs/iris_ros.urdf.xacro"/>
+
+  <!-- Launch Gazebo with ROS integration -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+<arg name="world_name" value="$(find gz_launch_ros)/worlds/iris_arducopter_runway.world --verbose" />
+    <arg name="debug" value="$(arg debug)" />
+  </include>
+
+<!-- Load the SDF file into the ROS Parameter Server -->
+
+      <param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(arg model)'" />
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -model iris -param robot_description"/>
+
+ <!-- <param name="robot_description" command="$(find xacro)/xacro '$(arg model)'" />
+
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -model iris -param robot_description"/> -->
+
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
+
+
+
+</launch>
+
